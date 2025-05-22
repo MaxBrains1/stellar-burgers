@@ -30,13 +30,19 @@ const initialState: UserState = {
   error: null
 };
 
+// --- Thunks с побочными эффектами внутри payload-creator-ов
+
 export const loginUserThunk = createAsyncThunk<
   { user: TUser; accessToken: string; refreshToken: string },
   TLoginData,
   { rejectValue: string }
 >('user/login', async (data, { rejectWithValue }) => {
   try {
-    return await loginUserApi(data);
+    const response = await loginUserApi(data);
+    // побочный эффект вынесен сюда:
+    setCookie('accessToken', response.accessToken);
+    localStorage.setItem('refreshToken', response.refreshToken);
+    return response;
   } catch (err: any) {
     return rejectWithValue(err.message ?? 'Unknown error');
   }
@@ -48,7 +54,11 @@ export const registerUserThunk = createAsyncThunk<
   { rejectValue: string }
 >('user/register', async (data, { rejectWithValue }) => {
   try {
-    return await registerUserApi(data);
+    const response = await registerUserApi(data);
+    // побочный эффект вынесен сюда:
+    setCookie('accessToken', response.accessToken);
+    localStorage.setItem('refreshToken', response.refreshToken);
+    return response;
   } catch (err: any) {
     return rejectWithValue(err.message ?? 'Unknown error');
   }
@@ -61,10 +71,15 @@ export const logoutUserThunk = createAsyncThunk<
 >('user/logout', async (_, { rejectWithValue }) => {
   try {
     await logoutApi();
+    // побочный эффект вынесен сюда:
+    deleteCookie('accessToken');
+    localStorage.removeItem('refreshToken');
   } catch (err: any) {
     return rejectWithValue(err.message ?? 'Unknown error');
   }
 });
+
+// остальные thunks без изменений, т.к. не делают side-effects с куками или storage…
 
 export const updateUserThunk = createAsyncThunk<
   { user: TUser },
@@ -137,8 +152,6 @@ const userSlice = createSlice({
         state.user = payload.user;
         state.isAuthorized = true;
         state.error = null;
-        setCookie('accessToken', payload.accessToken);
-        localStorage.setItem('refreshToken', payload.refreshToken);
       })
       .addCase(loginUserThunk.rejected, (state, { payload, error }) => {
         state.isLoading = false;
@@ -155,8 +168,6 @@ const userSlice = createSlice({
         state.user = payload.user;
         state.isAuthorized = true;
         state.error = null;
-        setCookie('accessToken', payload.accessToken);
-        localStorage.setItem('refreshToken', payload.refreshToken);
       })
       .addCase(registerUserThunk.rejected, (state, { payload, error }) => {
         state.isLoading = false;
@@ -173,8 +184,6 @@ const userSlice = createSlice({
         state.user = null;
         state.isAuthorized = false;
         state.error = null;
-        deleteCookie('accessToken');
-        localStorage.removeItem('refreshToken');
       })
       .addCase(logoutUserThunk.rejected, (state, { payload, error }) => {
         state.isLoading = false;
