@@ -119,7 +119,7 @@ export const {
 } = burgerConstructorSlice.actions;
 
 export default burgerConstructorSlice.reducer;
-
+export { burgerConstructorSlice };
 // Селектор состояния конструктора
 export const getConstructorSelector = (state: RootState) =>
   state.burgerConstructor;
