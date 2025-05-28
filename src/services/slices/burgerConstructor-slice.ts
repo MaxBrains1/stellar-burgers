@@ -19,7 +19,7 @@ export interface BurgerConstructorState {
   error: string | null;
 }
 
-const initialState: BurgerConstructorState = {
+export const initialState: BurgerConstructorState = {
   isLoading: false,
   constructorItems: {
     bun: null,

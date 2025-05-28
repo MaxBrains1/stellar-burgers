@@ -1,17 +1,11 @@
-import { ingredientsSlice, getIngredientsThunk } from './ingredients-slice';
+import {
+  ingredientsSlice,
+  getIngredientsThunk,
+  initialState
+} from './ingredients-slice'; // Импортируем initialState
 import { TIngredient } from '@utils-types';
 
 describe('Ingredients Slice', () => {
-  const initialState: {
-    isLoading: boolean;
-    ingredients: TIngredient[];
-    error: string | null;
-  } = {
-    isLoading: false,
-    ingredients: [],
-    error: null
-  };
-
   it('should handle getIngredientsThunk pending', () => {
     const action = { type: getIngredientsThunk.pending.type };
     const state = ingredientsSlice.reducer(initialState, action);

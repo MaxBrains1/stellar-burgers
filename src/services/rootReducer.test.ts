@@ -1,40 +1,22 @@
+import { initialState as burgerConstructorInitialState } from './slices/burgerConstructor-slice';
+import { initialState as feedInitialState } from './slices/feed-slice';
+import { initialState as ingredientsInitialState } from './slices/ingredients-slice';
+import { initialState as orderInitialState } from './slices/order-slice';
+import { initialState as userInitialState } from './slices/user-slice';
 import rootReducer from './rootReducer';
 
 describe('Root Reducer', () => {
   it('should return initial state for unknown action', () => {
+    // Собираем начальное состояние из импортированных initialState
+    const expectedInitialState = {
+      burgerConstructor: burgerConstructorInitialState,
+      feed: feedInitialState,
+      ingredients: ingredientsInitialState,
+      order: orderInitialState,
+      user: userInitialState
+    };
+
     const initialState = rootReducer(undefined, { type: 'UNKNOWN_ACTION' });
-    expect(initialState).toEqual({
-      burgerConstructor: {
-        isLoading: false,
-        constructorItems: { bun: null, ingredients: [] },
-        orderRequest: false,
-        orderModalData: null,
-        error: null
-      },
-      feed: {
-        isLoading: false,
-        orders: [],
-        total: 0,
-        totalToday: 0,
-        error: null
-      },
-      ingredients: {
-        isLoading: false,
-        ingredients: [],
-        error: null
-      },
-      order: {
-        isLoading: false,
-        order: null,
-        error: null
-      },
-      user: {
-        isLoading: false,
-        user: null,
-        isAuthorized: false,
-        isAuthChecked: false,
-        error: null
-      }
-    });
+    expect(initialState).toEqual(expectedInitialState);
   });
 });

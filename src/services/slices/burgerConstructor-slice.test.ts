@@ -4,18 +4,13 @@ import {
   moveIngredientUp,
   moveIngredientDown
 } from './burgerConstructor-slice';
-import { burgerConstructorSlice } from './burgerConstructor-slice'; // Импортируем слайс
+import {
+  burgerConstructorSlice,
+  initialState
+} from './burgerConstructor-slice'; // Импортируем initialState
 import { TConstructorIngredient, TIngredient } from '@utils-types';
 
 describe('Burger Constructor Slice', () => {
-  const initialState = {
-    isLoading: false,
-    constructorItems: { bun: null, ingredients: [] },
-    orderRequest: false,
-    orderModalData: null,
-    error: null
-  };
-
   it('should add a bun', () => {
     const bun: TIngredient = {
       _id: 'bun1',
@@ -31,7 +26,7 @@ describe('Burger Constructor Slice', () => {
       image_large: 'bun_large.jpg'
     };
     const action = addIngredient(bun);
-    const state = burgerConstructorSlice.reducer(initialState, action); // Используем reducer
+    const state = burgerConstructorSlice.reducer(initialState, action);
     expect(state.constructorItems.bun).toEqual({
       ...bun,
       id: expect.any(String)
